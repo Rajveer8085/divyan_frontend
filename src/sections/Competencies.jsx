@@ -48,22 +48,24 @@ const Competencies = () => {
             </Reveal>
           ))}
         </div>
-
-        <Reveal delay={80}>
-          <div className="mt-16 overflow-hidden border-y border-line py-7">
-            <div className="flex whitespace-nowrap marquee-track gap-10 font-display font-extrabold text-2xl md:text-4xl text-fg/30 tracking-tight">
-              {Array.from({ length: 2 }).map((_, k) => (
-                <div key={k} className="flex gap-10 shrink-0 items-center">
-                  <span>Engineered certainty.</span><span className="grad-text">✦</span>
-                  <span>Transparent workflows.</span><span className="grad-text">✦</span>
-                  <span>Scaled outcomes.</span><span className="grad-text">✦</span>
-                  <span>Since 2008.</span><span className="grad-text">✦</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </Reveal>
       </div>
+
+      {/* Marquee — full bleed */}
+      <Reveal delay={80}>
+        <div className="mt-16 -mx-5 sm:-mx-6 md:-mx-10 overflow-hidden border-y border-line py-7
+          [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          <div className="flex whitespace-nowrap marquee-track gap-10 font-display font-extrabold text-2xl md:text-4xl text-fg/30 tracking-tight">
+            {Array.from({ length: 2 }).map((_, k) => (
+              <div key={k} className="flex gap-10 shrink-0 items-center">
+                <span>Engineered certainty.</span><span className="grad-text">✦</span>
+                <span>Transparent workflows.</span><span className="grad-text">✦</span>
+                <span>Scaled outcomes.</span><span className="grad-text">✦</span>
+                <span>Since 2008.</span><span className="grad-text">✦</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Reveal>
     </section>
   );
 };
