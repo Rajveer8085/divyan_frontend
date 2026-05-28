@@ -102,8 +102,8 @@ const Hero = () => {
               Trusted operations
             </span>
             <div className="flex flex-wrap items-center gap-x-7 gap-y-2.5 font-display font-bold text-fg/40 text-base sm:text-lg tracking-tight">
-              <MaskReveal>Amazon SPN</MaskReveal>
-              <MaskReveal delay={80}>Flipkart</MaskReveal>
+              <MaskReveal>E-Commerce</MaskReveal>
+              <MaskReveal delay={80}>Marketplace</MaskReveal>
               <MaskReveal delay={160}>Enterprise ERP</MaskReveal>
               <MaskReveal delay={240}>Corporate Channels</MaskReveal>
             </div>

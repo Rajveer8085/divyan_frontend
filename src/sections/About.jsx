@@ -6,7 +6,7 @@ const timeline = [
   { year: 2008, title: 'Establishment & Global Entry',  desc: 'Inception of the organization, delivering foundational technology-enabled business frameworks for global enterprises.' },
   { year: 2018, title: 'Cross-Channel Expansion',       desc: 'Leveraging domain expertise to launch comprehensive consulting structures and corporate strategic alliances globally.' },
   { year: 2024, title: 'Marketplace Operations Pivot',  desc: 'Scaled non-technical operational desks, managing end-to-end seller profiles, cataloging, and corporate digital logistics.' },
-  { year: 2026, title: 'Marketing Ecosystem Leaders',   desc: 'Driving high-yield account management across major networks like Amazon SPN and Flipkart marketplaces.' },
+  { year: 2026, title: 'Marketing Ecosystem Leaders',   desc: 'Driving high-yield account management across major e-commerce marketplaces and global selling networks.' },
 ];
 
 const pillars = [

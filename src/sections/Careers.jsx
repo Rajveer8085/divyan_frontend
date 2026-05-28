@@ -7,12 +7,12 @@ const openPositions = [
   {
     id: '01',
     title: 'Marketplace Account Manager',
-    sub: 'Amazon SPN',
+    sub: 'E-Commerce',
     department: 'E-Commerce Logistics',
     location: 'Remote / Hybrid',
     type: 'Full-Time',
     experience: '2+ yrs',
-    desc: 'Engineer end-to-end marketplace operations. Verified expertise in Amazon SPN architecture, Flipkart cataloging, inventory health optimization, and ROAS-driven advertisement management.',
+    desc: 'Engineer end-to-end marketplace operations. Verified expertise in e-commerce platform architecture, marketplace cataloging, inventory health optimization, and ROAS-driven advertisement management.',
   },
   {
     id: '02',

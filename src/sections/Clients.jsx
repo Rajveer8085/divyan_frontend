@@ -2,7 +2,7 @@ import Reveal from '../components/Reveal';
 import MaskReveal from '../components/MaskReveal';
 
 /** EDITABLE PLACEHOLDERS — swap with real client/partner names (or logo images). */
-const logos = ['Amazon SPN', 'Flipkart', 'Nexora', 'Vertex', 'Lumen', 'Orbit Retail', 'Stratus', 'Apex Group'];
+const logos = ['E-Commerce', 'Marketplace', 'Nexora', 'Vertex', 'Lumen', 'Orbit Retail', 'Stratus', 'Apex Group'];
 
 const testimonials = [
   {

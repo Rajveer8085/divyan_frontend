@@ -8,7 +8,7 @@ const techServices = [
 ];
 
 const corporateServices = [
-  { id: '04', title: 'Amazon SPN & Account Management', desc: 'End-to-end marketplace operations: listing optimization, A+ content, cataloging, inventory analytics, and advertisement management across global e-commerce platforms.', tags: ['Amazon SPN', 'Flipkart', 'A+ Content', 'Ads'] },
+  { id: '04', title: 'E-Commerce & Account Management', desc: 'End-to-end marketplace operations: listing optimization, A+ content, cataloging, inventory analytics, and advertisement management across global e-commerce platforms.', tags: ['E-Commerce', 'Marketplace', 'A+ Content', 'Ads'] },
   { id: '05', title: 'Digital Marketing Strategy',      desc: 'Data backed search indexing, programmatic campaign optimization, lead funnel building, and sustainable audience conversion paths.',                                  tags: ['SEO', 'Performance', 'Funnels'] },
   { id: '06', title: 'Corporate Business Consulting',   desc: 'Operational workflow engineering, organizational scaling frameworks, and tactical cross-platform resource management.',                                              tags: ['Strategy', 'Scaling', 'Ops'] },
 ];
