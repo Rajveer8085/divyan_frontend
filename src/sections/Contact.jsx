@@ -10,7 +10,7 @@ const details = [
   { label: 'Telephone',  value: '+91 9956905174',                href: 'tel:+919956905174' },
   { label: 'Email',      value: 'info@divyan.co.in',             href: 'mailto:info@divyan.co.in' },
   { label: 'Hours',      value: '09:30 – 18:00 IST · Mon–Sat',   href: null },
-  { label: 'HQ',         value: '7th 704 BCC Tower, Sultanpur Road, Arjunganj, Lucknow, UP 226002, India', href: null },
+  // { label: 'HQ',         value: '7th 704 BCC Tower, Sultanpur Road, Arjunganj, Lucknow, UP 226002, India', href: null },
 ];
 
 const EMPTY = { name: '', email: '', phone: '', subject: '', message: '' };

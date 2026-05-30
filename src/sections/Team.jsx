@@ -1,8 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Reveal from '../components/Reveal';
 import MaskReveal from '../components/MaskReveal';
 import Avatar from '../components/Avatar';
-import TeamSpotlight from '../components/TeamSpotlight';
 import { api, assetUrl } from '../lib/api';
 
 // Shown only if the API is unreachable.
@@ -13,10 +12,12 @@ const FALLBACK_TEAM = [
   { id: 'f4', name: 'Neha Verma',   role: 'Director of Digital Marketing',  initials: 'NV', tag: 'Marketing',   grad: 'from-indigo to-violet', img: null, quote: 'Data tells us where to aim; creativity makes it land.' },
 ];
 
+const AUTO_MS = 5000;
+
 const Team = () => {
   const [members, setMembers] = useState(FALLBACK_TEAM);
-  const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
+  const [paused, setPaused] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -30,7 +31,23 @@ const Team = () => {
     return () => { active = false; };
   }, []);
 
-  const openAt = (i) => { setIndex(i); setOpen(true); };
+  const count = members.length;
+  const m = members[index] || members[0];
+
+  const next = useCallback(() => setIndex((i) => (i + 1) % count), [count]);
+  const prev = useCallback(() => setIndex((i) => (i - 1 + count) % count), [count]);
+
+  // Keep index in range if member list changes
+  useEffect(() => { setIndex((i) => (count ? i % count : 0)); }, [count]);
+
+  // Auto-advance on a loop (pauses on hover)
+  useEffect(() => {
+    if (paused || count <= 1) return;
+    const t = setTimeout(next, AUTO_MS);
+    return () => clearTimeout(t);
+  }, [index, paused, count, next]);
+
+  if (!m) return null;
 
   return (
     <section id="team" className="relative bg-ink text-fg py-24 md:py-28 px-5 sm:px-6 md:px-10 overflow-hidden">
@@ -57,74 +74,92 @@ const Team = () => {
           </Reveal>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-          {members.map((m, i) => (
-            <Reveal key={m.id || m.name} delay={60 + i * 80}>
-              <button
-                type="button"
-                onClick={() => openAt(i)}
-                className="glass glass-hover group rounded-2xl p-5 md:p-6 h-full w-full text-left flex flex-col"
-              >
-                <div className="flex items-center gap-4 mb-5">
-                  <Avatar member={m} className="w-16 h-16 rounded-xl shrink-0" textClass="text-xl" />
-                  <div className="min-w-0">
-                    <h3 className="font-display font-bold text-base md:text-lg text-fg tracking-tight truncate">{m.name}</h3>
-                    <p className="font-sans text-[12.5px] text-mid leading-snug">{m.role}</p>
-                    {m.tag && <span className="inline-block mt-1.5 font-mono text-[9px] uppercase tracking-widest text-indigo bg-indigo/12 px-2 py-0.5 rounded-full">{m.tag}</span>}
-                  </div>
+        {/* Testimonial slider — medium centered card */}
+        <Reveal delay={120}>
+          <div
+            className="relative max-w-2xl mx-auto"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            {/* Side nav arrows */}
+            <button
+              onClick={prev}
+              aria-label="Previous member"
+              className="absolute left-0 sm:-left-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full glass inline-flex items-center justify-center text-fg/80 hover:text-fg hover:border-indigo/40 hover:scale-105 transition-all duration-300"
+            >
+              ←
+            </button>
+            <button
+              onClick={next}
+              aria-label="Next member"
+              className="absolute right-0 sm:-right-5 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full glass inline-flex items-center justify-center text-fg/80 hover:text-fg hover:border-indigo/40 hover:scale-105 transition-all duration-300"
+            >
+              →
+            </button>
+
+            {/* Gradient-border card */}
+            <div className="rounded-[28px] p-px bg-gradient-to-br from-indigo/50 via-white/10 to-violet/50 shadow-card">
+              <div className="relative rounded-[27px] bg-ink2 overflow-hidden text-center px-8 sm:px-12 pt-14 pb-9">
+                {/* Auto-advance progress */}
+                <div className="absolute top-0 left-0 right-0 h-0.5 bg-white/10">
+                  <div
+                    key={index}
+                    className="h-full bg-gradient-to-r from-indigo via-cyan to-violet"
+                    style={{ animation: paused ? 'none' : `spotlightBar ${AUTO_MS}ms linear forwards` }}
+                  />
                 </div>
 
-                {m.quote && (
-                  <p className="font-sans text-[13.5px] text-fg/75 leading-relaxed italic border-l-2 border-line group-hover:border-indigo pl-3.5 line-clamp-3 transition-colors flex-1">
-                    “{m.quote}”
-                  </p>
-                )}
+                {/* Decorative quote mark + glow */}
+                <span aria-hidden className="absolute top-5 left-7 font-display font-extrabold text-7xl leading-none grad-text opacity-25 select-none">“</span>
+                <div aria-hidden className="absolute -top-16 left-1/2 -translate-x-1/2 w-72 h-40 pointer-events-none"
+                  style={{ background: 'radial-gradient(closest-side, rgba(110,139,255,0.18), transparent 70%)' }} />
 
-                <span className="inline-flex items-center gap-1.5 mt-5 pt-4 border-t border-line font-sans text-[12px] font-medium text-soft group-hover:text-indigo transition-colors">
-                  View profile
-                  <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1">→</span>
-                </span>
-              </button>
-            </Reveal>
-          ))}
-        </div>
-
-        {/* View all */}
-        {members.length > 0 && (
-          <Reveal delay={120}>
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-5 glass rounded-2xl p-6 md:p-7">
-              <div className="flex items-center gap-4">
-                <div className="flex -space-x-3">
-                  {members.slice(0, 4).map((m) => (
-                    <Avatar key={m.id || m.name} member={m} className="w-10 h-10 rounded-full ring-2 ring-ink" textClass="text-xs" />
-                  ))}
-                  {members.length > 4 && (
-                    <span className="w-10 h-10 rounded-full ring-2 ring-ink bg-graphite flex items-center justify-center font-mono text-[11px] text-fg/80">
-                      +{members.length - 4}
+                {/* Rounded profile photo with gradient ring */}
+                <div className="relative mx-auto w-24 h-24 sm:w-28 sm:h-28 mb-6">
+                  <div className="w-full h-full rounded-full p-[2.5px] bg-gradient-to-br from-indigo via-cyan to-violet shadow-glow">
+                    <Avatar
+                      key={m.id || m.name}
+                      member={m}
+                      className="w-full h-full rounded-full ring-2 ring-ink2 animate-[fadeIn_.5s_ease]"
+                      textClass="text-3xl sm:text-4xl"
+                    />
+                  </div>
+                  {m.tag && (
+                    <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] uppercase tracking-widest text-fg bg-indigo px-2.5 py-0.5 rounded-full shadow-glow">
+                      {m.tag}
                     </span>
                   )}
                 </div>
-                <p className="font-sans text-[14px] text-mid">
-                  Meet the full <span className="text-fg font-medium">{members.length}-person</span> bench.
-                </p>
+
+                {/* Quote + identity */}
+                <div key={`q-${index}`} className="animate-[fadeIn_.5s_ease]">
+                  <blockquote className="font-display font-semibold text-lg sm:text-[22px] text-fg leading-relaxed tracking-tight max-w-md mx-auto">
+                    {m.quote}
+                  </blockquote>
+
+                  <div className="mt-6 flex flex-col items-center">
+                    <span aria-hidden className="w-8 h-px bg-gradient-to-r from-transparent via-indigo to-transparent mb-3" />
+                    <p className="font-display font-bold text-base text-fg">{m.name}</p>
+                    <p className="font-sans text-[13px] text-mid mt-0.5">{m.role}</p>
+                  </div>
+                </div>
+
+                {/* Dots */}
+                <div className="flex items-center justify-center gap-2 mt-7">
+                  {members.map((mem, i) => (
+                    <button
+                      key={mem.id || mem.name}
+                      onClick={() => setIndex(i)}
+                      aria-label={`View ${mem.name}`}
+                      className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? 'w-6 bg-indigo' : 'w-1.5 bg-white/20 hover:bg-white/40'}`}
+                    />
+                  ))}
+                </div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => openAt(0)}
-                className="group inline-flex items-center gap-2.5 font-sans text-sm font-semibold text-ink bg-fg hover:bg-indigo hover:text-fg px-6 py-3.5 rounded-full transition-colors duration-500 shadow-glow w-full sm:w-auto justify-center"
-              >
-                View all team
-                <span aria-hidden className="transition-transform duration-500 group-hover:translate-x-1">→</span>
-              </button>
             </div>
-          </Reveal>
-        )}
+          </div>
+        </Reveal>
       </div>
-
-      {open && (
-        <TeamSpotlight members={members} index={index} setIndex={setIndex} onClose={() => setOpen(false)} />
-      )}
     </section>
   );
 };
