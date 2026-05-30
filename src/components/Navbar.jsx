@@ -38,9 +38,13 @@ const Navbar = () => {
       >
         <div className="max-w-page mx-auto px-5 sm:px-6 md:px-10 h-16 md:h-[72px] flex items-center justify-between">
           <a href="#home" className="flex items-center gap-2.5 select-none">
-            <span className="relative w-8 h-8 rounded-xl flex items-center justify-center bg-gradient-to-br from-indigo to-cyan shadow-glow">
-              <span className="font-display font-extrabold text-ink text-[15px] leading-none">D</span>
-            </span>
+            <img
+              src="/Logo.webp"
+              alt="Divyan Technologies logo"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain"
+            />
             <span className="font-display font-bold text-[15px] tracking-tight text-fg">
               Divyan<span className="grad-text">.tech</span>
             </span>

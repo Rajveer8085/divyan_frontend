@@ -1,6 +1,21 @@
 import { useRef, useState, useEffect, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+
+// Pulls the camera back so a sphere of `radius` always fits on BOTH axes.
+// For a tall/narrow column, width is the tighter constraint, so this kills the x-axis clipping.
+function FitCamera({ radius = 2.2 }) {
+  const { camera, size } = useThree();
+  useEffect(() => {
+    const aspect = size.width / Math.max(1, size.height);
+    const halfV = Math.tan((camera.fov * Math.PI) / 180 / 2);
+    const distForHeight = radius / halfV;
+    const distForWidth = radius / (halfV * aspect);
+    camera.position.z = Math.max(distForHeight, distForWidth);
+    camera.updateProjectionMatrix();
+  }, [camera, size.width, size.height, radius]);
+  return null;
+}
 
 function useScrollProgress() {
   const [p, setP] = useState(0);
@@ -77,7 +92,7 @@ function Core({ scrollRef, mouseRef, palette }) {
       group.current.rotation.x += (targetX - group.current.rotation.x) * 0.06;
       group.current.rotation.z += (mx * 0.2 - group.current.rotation.z) * 0.06;
       // Scroll-driven scale pulse
-      const sc = 1 + Math.sin(s * Math.PI) * 0.12;
+      const sc = 1 + Math.sin(s * Math.PI) * 0.06;
       group.current.scale.setScalar(sc);
     }
     if (inner.current) {
@@ -99,12 +114,12 @@ function Core({ scrollRef, mouseRef, palette }) {
         <meshBasicMaterial color={palette.inner} wireframe transparent opacity={0.9}
           blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      <mesh ref={ring} scale={2.0}>
+      <mesh ref={ring} scale={1.7}>
         <torusGeometry args={[1, 0.006, 8, 110]} />
         <meshBasicMaterial color={palette.inner} transparent opacity={0.6}
           blending={THREE.AdditiveBlending} depthWrite={false} />
       </mesh>
-      <mesh scale={2.35} rotation={[Math.PI / 2.4, 0, 0]}>
+      <mesh scale={1.95} rotation={[Math.PI / 2.4, 0, 0]}>
         <torusGeometry args={[1, 0.004, 6, 110]} />
         <meshBasicMaterial color={palette.accent} transparent opacity={0.4}
           blending={THREE.AdditiveBlending} depthWrite={false} />
@@ -127,15 +142,17 @@ export default function WireScene({ className = '', size = 'lg' }) {
   const onLeave = () => { mouseRef.current.x = 0; mouseRef.current.y = 0; };
 
   const palette = { outer: '#6E8BFF', inner: '#22D3EE', accent: '#A78BFA' };
-  const camZ = size === 'sm' ? 4.8 : 4.0;
+  // Largest element is the accent ring (scale 1.95) + scroll scale-pulse (~6%); add a little margin.
+  const fitRadius = 1.95 * 1.06 + 0.2;
 
   return (
     <div className={className} onPointerMove={onMove} onPointerLeave={onLeave}>
       <Canvas
         dpr={[1, 1.7]}
-        camera={{ position: [0, 0, camZ], fov: 45 }}
+        camera={{ position: [0, 0, 5.6], fov: 45 }}
         gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       >
+        <FitCamera radius={fitRadius} />
         <Core scrollRef={scrollRef} mouseRef={mouseRef} palette={palette} />
         <Particles count={size === 'sm' ? 160 : 260} />
       </Canvas>
