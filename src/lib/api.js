@@ -30,7 +30,9 @@ export async function api(path, { method = 'GET', body, auth = false, isForm = f
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error(data.errors?.[0]?.message || data.message || 'Request failed');
+    const err = new Error(data.errors?.[0]?.message || data.message || 'Request failed');
+    err.status = res.status; // surface HTTP status so callers can detect 401/403 reliably
+    throw err;
   }
   return data;
 }

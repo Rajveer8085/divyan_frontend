@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Reveal from '../components/Reveal';
 import MaskReveal from '../components/MaskReveal';
 import Magnetic from '../components/Magnetic';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:9999';
+const MESSAGE_MAX = 1000;
 
 const details = [
   { label: 'Company',    value: 'Divyan Technologies Pvt. Ltd.', href: null },
@@ -19,8 +20,19 @@ const Contact = () => {
   const [form, setForm] = useState(EMPTY);
   const [status, setStatus] = useState('idle'); // idle | submitting | success | error
   const [feedback, setFeedback] = useState('');
+  const feedbackRef = useRef(null);
 
-  const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
+  const onChange = (e) => {
+    const { name, value } = e.target;
+    setForm((f) => ({ ...f, [name]: name === 'message' ? value.slice(0, MESSAGE_MAX) : value }));
+  };
+
+  // Move focus to the feedback banner so screen readers and users see the result.
+  useEffect(() => {
+    if ((status === 'success' || status === 'error') && feedbackRef.current) {
+      feedbackRef.current.focus();
+    }
+  }, [status, feedback]);
 
   const onSubmit = async (e) => {
     e.preventDefault();
@@ -111,10 +123,17 @@ const Contact = () => {
                 </div>
                 <Field label="Subject" name="subject" value={form.subject} onChange={onChange} placeholder="Application Engineering / Marketing Deployment" />
                 <div>
-                  <label className="block font-sans text-[11px] uppercase tracking-wider text-soft font-medium mb-2">Operational outline</label>
+                  <div className="flex items-baseline justify-between mb-2">
+                    <label htmlFor="contact-message" className="block font-sans text-[11px] uppercase tracking-wider text-soft font-medium">Operational outline</label>
+                    <span className={`font-mono text-[10px] tabular-nums ${form.message.length >= MESSAGE_MAX ? 'text-red-300' : 'text-soft'}`}>
+                      {form.message.length}/{MESSAGE_MAX}
+                    </span>
+                  </div>
                   <textarea
+                    id="contact-message"
                     name="message"
                     rows="4"
+                    maxLength={MESSAGE_MAX}
                     value={form.message}
                     onChange={onChange}
                     placeholder="State your framework expectations or core business requirements…"
@@ -125,8 +144,10 @@ const Contact = () => {
 
                 {feedback && (
                   <p
+                    ref={feedbackRef}
+                    tabIndex={-1}
                     role="status"
-                    className={`text-[13px] rounded-xl px-4 py-3 border ${
+                    className={`text-[13px] rounded-xl px-4 py-3 border outline-none ${
                       status === 'success'
                         ? 'text-emerald border-emerald/30 bg-emerald/10'
                         : 'text-red-300 border-red-400/30 bg-red-400/10'

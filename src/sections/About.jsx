@@ -17,7 +17,7 @@ const pillars = [
 
 const About = () => {
   return (
-    <section id="about" className="relative bg-ink2 text-fg py-24 md:py-28 px-5 sm:px-6 md:px-10 overflow-hidden border-y border-line">
+    <section id="about" className="relative bg-ink2 text-fg py-24 md:py-28 px-5 sm:px-6 md:px-10 overflow-x-clip border-y border-line">
       <div aria-hidden className="absolute -top-24 left-1/2 -translate-x-1/2 w-[800px] h-[420px] pointer-events-none"
         style={{ background: 'radial-gradient(closest-side, rgba(110,139,255,0.16), transparent 70%)' }} />
 
@@ -50,30 +50,41 @@ const About = () => {
           <StatCell value={<CountUp to={4} />} label="Active markets" />
         </div>
 
-        {/* Timeline */}
+        {/* Timeline — stacking cards that pin & overlap on scroll */}
         <div className="mb-20">
           <Reveal>
             <h3 className="font-display font-bold text-lg text-fg mb-1.5 tracking-tight">Growth milestones</h3>
-            <p className="font-sans text-sm text-mid mb-9">2008 – 2026 · four moments that defined the firm.</p>
+            <p className="font-sans text-sm text-mid mb-9">2008 – 2026 · four moments that defined the firm. Scroll to stack.</p>
           </Reveal>
-          <div className="relative pl-6 md:pl-8 border-l-2 border-line space-y-5">
+
+          {/* Each card sticks near the top; the next scrolls up and rests on it,
+              offset down a touch so the previous card's year row peeks above. */}
+          <div className="relative space-y-6 md:space-y-8">
             {timeline.map((m, i) => (
-              <Reveal key={m.year} delay={60 + i * 90}>
-                <div className="relative">
-                  <span className="absolute -left-[31px] md:-left-[39px] top-6 w-3.5 h-3.5 rounded-full bg-ink border-2 border-indigo shadow-glow" />
-                  <div className="glass glass-hover rounded-2xl p-5 md:p-6">
-                    <div className="flex items-baseline justify-between mb-2.5">
-                      <div className="font-display font-extrabold text-2xl md:text-3xl grad-text tracking-tight">
-                        <CountUp to={m.year} format={(n) => n} />
-                      </div>
-                      <span className="font-mono text-[10px] tracking-widest uppercase text-soft">Stage {String(i + 1).padStart(2, '0')}/04</span>
+              <div
+                key={m.year}
+                className="sticky"
+                style={{
+                  top: `calc(5.5rem + ${i * 3.25}rem)`,
+                  zIndex: i + 1,
+                }}
+              >
+                <div className="glass rounded-2xl p-6 md:p-8 border border-lineStrong shadow-card relative overflow-hidden">
+                  {/* top accent line */}
+                  <span aria-hidden className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-indigo/60 to-transparent" />
+                  <div className="flex items-baseline justify-between mb-2.5">
+                    <div className="font-display font-extrabold text-3xl md:text-4xl grad-text tracking-tight">
+                      <CountUp to={m.year} format={(n) => n} />
                     </div>
-                    <h4 className="font-display font-bold text-base md:text-lg text-fg mb-1.5 tracking-tight">{m.title}</h4>
-                    <p className="font-sans text-[13.5px] text-mid leading-relaxed">{m.desc}</p>
+                    <span className="font-mono text-[10px] tracking-widest uppercase text-soft">Stage {String(i + 1).padStart(2, '0')}/04</span>
                   </div>
+                  <h4 className="font-display font-bold text-lg md:text-xl text-fg mb-2 tracking-tight">{m.title}</h4>
+                  <p className="font-sans text-[14px] md:text-[15px] text-mid leading-relaxed max-w-2xl">{m.desc}</p>
                 </div>
-              </Reveal>
+              </div>
             ))}
+            {/* Tail spacer so the last card can settle before the section ends */}
+            <div aria-hidden className="h-[35vh]" />
           </div>
         </div>
 

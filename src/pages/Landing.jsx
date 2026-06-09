@@ -17,7 +17,7 @@ import Footer from '../components/Footer';
 export default function Landing() {
   return (
     <LenisProvider>
-      <div className="relative w-full min-h-screen bg-ink text-fg overflow-x-hidden font-sans">
+      <div className="relative w-full min-h-screen bg-ink text-fg overflow-x-clip font-sans">
         <ScrollProgress />
         <Navbar />
         <main>

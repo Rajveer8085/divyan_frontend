@@ -42,7 +42,12 @@ export default function AdminDashboard({ onLogout }) {
   const editing = Boolean(form.id);
   const unread = messages.filter((m) => !m.read).length;
 
-  const guard = (err) => { if (/session|authentication/i.test(err.message)) onLogout(); };
+  // Auto-logout on auth failure — prefer the HTTP status, fall back to message text.
+  const guard = (err) => {
+    if (err.status === 401 || err.status === 403 || /session|authentication|unauthor/i.test(err.message || '')) {
+      onLogout();
+    }
+  };
 
   // ── Team ──────────────────────────────────────────────
   const load = async () => {

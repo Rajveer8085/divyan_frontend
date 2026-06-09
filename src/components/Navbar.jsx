@@ -13,12 +13,32 @@ const NAV_LINKS = [
 const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeId, setActiveId] = useState('');
   const drawerRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 16);
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Highlight the nav link for the section currently in view.
+  useEffect(() => {
+    const els = NAV_LINKS
+      .map((l) => document.getElementById(l.href.slice(1)))
+      .filter(Boolean);
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+        if (visible[0]) setActiveId(visible[0].target.id);
+      },
+      { rootMargin: '-45% 0px -50% 0px', threshold: [0, 0.25, 0.5, 1] }
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
   }, []);
 
   useEffect(() => {
@@ -33,7 +53,7 @@ const Navbar = () => {
     <>
       <nav
         className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ease-out ${
-          scrolled ? 'bg-ink/70 backdrop-blur-xl border-b border-line' : 'bg-transparent border-b border-transparent'
+          scrolled ? 'bg-ink/60 backdrop-blur-xl border-b border-line' : 'bg-ink/20 backdrop-blur-md border-b border-transparent'
         }`}
       >
         <div className="max-w-page mx-auto px-5 sm:px-6 md:px-10 h-16 md:h-[72px] flex items-center justify-between">
@@ -51,16 +71,22 @@ const Navbar = () => {
           </a>
 
           <ul className="hidden md:flex items-center gap-1 glass rounded-full px-1.5 py-1.5">
-            {NAV_LINKS.map((l) => (
-              <li key={l.href}>
-                <a
-                  href={l.href}
-                  className="inline-flex items-center font-sans text-[13px] font-medium text-fg/70 hover:text-fg px-3.5 py-1.5 rounded-full hover:bg-white/5 transition-colors duration-300"
-                >
-                  {l.label}
-                </a>
-              </li>
-            ))}
+            {NAV_LINKS.map((l) => {
+              const isActive = l.href.slice(1) === activeId;
+              return (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`inline-flex items-center font-sans text-[13px] font-medium px-3.5 py-1.5 rounded-full transition-colors duration-300 ${
+                      isActive ? 'text-fg bg-white/10' : 'text-fg/70 hover:text-fg hover:bg-white/5'
+                    }`}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              );
+            })}
           </ul>
 
           <div className="flex items-center gap-3">

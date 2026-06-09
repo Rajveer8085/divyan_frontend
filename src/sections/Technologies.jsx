@@ -1,13 +1,53 @@
 import Reveal from '../components/Reveal';
 import MaskReveal from '../components/MaskReveal';
 import WireScene from '../components/WireScene';
+import { Cloud, Webhook, GitBranch } from 'lucide-react';
 
 const categories = [
-  { id: '01', tag: 'Frontend', title: 'Frontend Engineering', skills: ['React.js', 'Tailwind CSS', 'JavaScript ES6+', 'TypeScript'] },
-  { id: '02', tag: 'Backend',  title: 'Backend Architecture', skills: ['Spring Boot', 'Node.js', 'Express', 'REST APIs'] },
-  { id: '03', tag: 'Data',     title: 'Database Management',  skills: ['MySQL', 'PostgreSQL', 'MongoDB', 'Data Modeling'] },
-  { id: '04', tag: 'Cloud',    title: 'Cloud & Optimization', skills: ['AWS', 'Docker', 'Git', 'CI/CD'] },
+  { id: '01', tag: 'Frontend', title: 'Frontend Engineering', skills: ['React.js', 'Next.js', 'Tailwind CSS', 'TypeScript', 'JavaScript ES6+'] },
+  { id: '02', tag: 'Backend',  title: 'Backend Architecture', skills: ['Node.js', 'Express', 'NestJS', 'Python', 'Spring Boot', 'REST APIs'] },
+  { id: '03', tag: 'Data',     title: 'Database Management',  skills: ['PostgreSQL', 'MySQL', 'MongoDB', 'Prisma', 'Sequelize', 'Redis'] },
+  { id: '04', tag: 'Cloud',    title: 'Cloud & DevOps',       skills: ['AWS', 'Vercel', 'Docker', 'Kubernetes', 'CI/CD', 'Terraform'] },
 ];
+
+// Uniform light tint so brand logos stay visible & cohesive on the dark theme.
+const ICON_TINT = 'D8DAF5';
+
+// Brand logos via the Simple Icons CDN (slug per skill).
+const SI_SLUG = {
+  'React.js': 'react',          'Next.js': 'nextdotjs',     'Tailwind CSS': 'tailwindcss',
+  'TypeScript': 'typescript',   'JavaScript ES6+': 'javascript',
+  'Node.js': 'nodedotjs',       'Express': 'express',       'NestJS': 'nestjs',
+  'Python': 'python',           'Spring Boot': 'springboot',
+  'PostgreSQL': 'postgresql',   'MySQL': 'mysql',           'MongoDB': 'mongodb',
+  'Prisma': 'prisma',           'Sequelize': 'sequelize',   'Redis': 'redis',
+  'Vercel': 'vercel',           'Docker': 'docker',         'Kubernetes': 'kubernetes',
+  'Terraform': 'terraform',
+};
+
+// Generic concepts without a brand mark → Lucide icons.
+const LUCIDE_ICON = { 'AWS': Cloud, 'REST APIs': Webhook, 'CI/CD': GitBranch };
+
+function TechIcon({ name }) {
+  const slug = SI_SLUG[name];
+  if (slug) {
+    return (
+      <img
+        src={`https://cdn.simpleicons.org/${slug}/${ICON_TINT}`}
+        alt=""
+        aria-hidden
+        width={16}
+        height={16}
+        loading="lazy"
+        className="w-4 h-4 shrink-0"
+        onError={(e) => { e.currentTarget.style.display = 'none'; }}
+      />
+    );
+  }
+  const L = LUCIDE_ICON[name];
+  if (L) return <L size={15} strokeWidth={1.8} aria-hidden className="shrink-0" style={{ color: `#${ICON_TINT}` }} />;
+  return null;
+}
 
 const Technologies = () => {
   return (
@@ -47,7 +87,10 @@ const Technologies = () => {
                 <h3 className="font-display font-bold text-xl md:text-2xl text-fg leading-snug tracking-tight mb-5">{c.title}</h3>
                 <ul className="flex flex-wrap gap-2">
                   {c.skills.map((s) => (
-                    <li key={s} className="font-sans text-[13px] font-medium text-fg/80 bg-white/5 border border-line px-3 py-1.5 rounded-full hover:bg-indigo hover:text-fg hover:border-indigo transition-colors duration-300">{s}</li>
+                    <li key={s} className="inline-flex items-center gap-2 font-sans text-[13px] font-medium text-fg/80 bg-white/5 border border-line pl-2.5 pr-3 py-1.5 rounded-full hover:bg-indigo hover:text-fg hover:border-indigo transition-colors duration-300">
+                      <TechIcon name={s} />
+                      {s}
+                    </li>
                   ))}
                 </ul>
               </div>
