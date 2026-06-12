@@ -7,7 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:9999';
 const MESSAGE_MAX = 1000;
 
 const details = [
-  { label: 'Company',    value: 'Divyan Technologies Pvt. Ltd.', href: null },
+  { label: 'Company',    value: 'Divyan Technologies Pvt. Ltd.', href: null },
   { label: 'Telephone',  value: '+91 9956905174',                href: 'tel:+919956905174' },
   { label: 'Email',      value: 'info@divyan.co.in',             href: 'mailto:info@divyan.co.in' },
   { label: 'Hours',      value: '09:30 – 18:00 IST · Mon–Sat',   href: null },

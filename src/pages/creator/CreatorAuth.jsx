@@ -95,7 +95,7 @@ export default function CreatorAuth({ onAuth }) {
           <form onSubmit={submit} noValidate className="space-y-4">
             {isSignup && (
               <AuthField label="Full name" name="name" value={form.name} onChange={onChange}
-                placeholder="Aisha Khan" autoComplete="name" error={fieldErrors.name} />
+                placeholder="RJVR" autoComplete="name" error={fieldErrors.name} />
             )}
             <AuthField label="Email" name="email" type="email" value={form.email} onChange={onChange}
               placeholder="you@example.com" autoComplete={isSignup ? 'email' : 'username'} error={fieldErrors.email} />
