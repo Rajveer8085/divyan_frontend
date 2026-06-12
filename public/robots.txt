@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /
 Disallow: /admin
+Disallow: /creator
 
 Sitemap: https://divyan.co.in/sitemap.xml

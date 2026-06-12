@@ -14,7 +14,7 @@ export const assetUrl = (p) => (p && p.startsWith('/') ? `${API_URL}${p}` : p);
  * - JSON by default; pass `isForm: true` with a FormData body for uploads.
  * - `auth: true` attaches the bearer token.
  */
-export async function api(path, { method = 'GET', body, auth = false, isForm = false } = {}) {
+export async function api(path, { method = 'GET', body, auth = false, isForm = false, credentials } = {}) {
   const headers = {};
   if (!isForm && body) headers['Content-Type'] = 'application/json';
   if (auth) {
@@ -25,13 +25,17 @@ export async function api(path, { method = 'GET', body, auth = false, isForm = f
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers,
+    // cookie-based flows (creator auth) pass credentials: 'include'
+    credentials,
     body: isForm ? body : body ? JSON.stringify(body) : undefined,
   });
 
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
     const err = new Error(data.errors?.[0]?.message || data.message || 'Request failed');
-    err.status = res.status; // surface HTTP status so callers can detect 401/403 reliably
+    err.status = res.status;   // surface HTTP status so callers can detect 401/403 reliably
+    err.errors = data.errors;  // field-level validation failures, if any
+    err.data = data;
     throw err;
   }
   return data;

@@ -23,6 +23,31 @@ html, body {
   overflow-x: clip;
 }
 
+/* Tailwind v4 dropped the default pointer cursor on buttons — restore it
+   globally for every interactive element (covers public site, admin & creator). */
+@layer base {
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  select:not(:disabled),
+  label:has(> input[type="checkbox"]),
+  label:has(> input[type="radio"]),
+  input[type="checkbox"]:not(:disabled),
+  input[type="radio"]:not(:disabled),
+  input[type="file"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="reset"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  select:disabled,
+  [aria-disabled="true"],
+  [disabled] {
+    cursor: not-allowed;
+  }
+}
+
 /* Lenis */
 .lenis.lenis-smooth { scroll-behavior: auto !important; }
 .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
